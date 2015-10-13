@@ -44,14 +44,14 @@ for i = 1:10
 
         C3 = alpha1*log(1+h131*Psb) + alpha2*log(1+h132*Psm2+(sqrt(h132*Psm1)+sqrt(h23*Prm))^2);
 
-        [BETA,assistedRate(j)] = fminbnd(@(alpha1)-min(C1+C2,C3),0,1);
+        %[BETA,assistedRate(j)] = fminbnd(@(alpha1)-min(C1+C2,C3),0,1);
         
-        %assistedRate(j) = min(C1+C2,C3);
+        assistedRate(j) = min(C1+C2,C3);
         
         rate(j) = alpha1*log(1+h131*Ps/Pnoise) + alpha2*log(1+h132*Ps/Pnoise);
 
     end
-    pdfRate(i) = mean(-assistedRate);
+    pdfRate(i) = mean(assistedRate);
     directRate(i) = mean(rate);
     
     SNR(i) = 10*log(Ps/Pnoise);
