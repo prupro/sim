@@ -1,6 +1,6 @@
 r1 = 10;
-r2 = 6;
-D = 8;
+r2 = 5;
+D = 5;
 
 assistedRate = zeros(100,1);
 rate = zeros(100,1);
@@ -13,14 +13,14 @@ Pnoise = 1;
 for i = 1:10
     
       
-    alpha1=0.9;
+    alpha1=0.5;
     alpha2 = 1-alpha1;
     Psb = alpha1*Ps;
     Psm = alpha2*Ps;
 
-    beta1 = 0.1;
-    Psm1 = beta1*Psm;
-    Psm2 = (1-beta1)*Psm;
+%     beta1 = 6.6*10^(-5);
+%     Psm1 = beta1*Psm;
+%     Psm2 = (1-beta1)*Psm;
 
     Pr = Ps;
     Prm = Ps/alpha2;
@@ -39,19 +39,24 @@ for i = 1:10
         h132 = g132*(r1^(-gamma));
         h23 = g23*(D^(-gamma));
 
-        C1 = alpha1*log(1+h12*Psb);
-        C2 = alpha2*log(1+h132*Psm2);
-
-        C3 = alpha1*log(1+h131*Psb) + alpha2*log(1+h132*Psm2+(sqrt(h132*Psm1)+sqrt(h23*Prm))^2);
-
-        %[BETA,assistedRate(j)] = fminbnd(@(alpha1)-min(C1+C2,C3),0,1);
+%         C1 = alpha1*log(1+h12*Psb);
+%         C2 = alpha2*log(1+h132*Psm2);
+% 
+%         C3 =  alpha1*log(1+h131*Psb) + alpha2*log(1+h132*Psm2+(sqrt(h132*Psm1)+sqrt(h23*Prm))^2);
         
-        assistedRate(j) = min(C1+C2,C3);
+        C = @(beta1) -alpha1*log(1+h12*Psb) - alpha2*log(1+h132*(1-beta1)*Psm);
+
+        C3 = @(beta1) -alpha1*log(1+h131*Psb) - alpha2*log(1+h132*(1-beta1)*Psm+(sqrt(h132*beta1*Psm)+sqrt(h23*Prm))^2);
+
+
+        [BETA,assistedRate(j)] = fminbnd(@(beta1) min(C3(beta1),C(beta1)),0,1);
+        
+        %assistedRate(j) = min(C1+C2,C3);
         
         rate(j) = alpha1*log(1+h131*Ps/Pnoise) + alpha2*log(1+h132*Ps/Pnoise);
 
     end
-    pdfRate(i) = mean(assistedRate);
+    pdfRate(i) = mean(-assistedRate);
     directRate(i) = mean(rate);
     
     SNR(i) = 10*log(Ps/Pnoise);
