@@ -1,6 +1,6 @@
 r1 = 10;
-r2 = 5;
-D = 5;
+r2 = 6;
+D = 8;
 
 assistedRate = zeros(100,1);
 rate = zeros(100,1);
@@ -49,7 +49,7 @@ for i = 1:10
         C3 = @(beta1) -alpha1*log(1+h131*Psb) - alpha2*log(1+h132*(1-beta1)*Psm+(sqrt(h132*beta1*Psm)+sqrt(h23*Prm))^2);
 
 
-        [BETA,assistedRate(j)] = fminbnd(@(beta1) min(C3(beta1),C(beta1)),0,1);
+        [beta,assistedRate(j)] = fminbnd(@(beta1) min(C3(beta1),C(beta1)),0,1);
         
         %assistedRate(j) = min(C1+C2,C3);
         

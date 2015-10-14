@@ -1,5 +1,5 @@
 L = 200; 
-area = 2*L*2*L;
+area = L*L;
 lambda1 = 1; % density of Active Users (AU)
 lambda2 = 2; % density of Idle Users (IU)
 
@@ -18,7 +18,7 @@ p2 = unifrnd(-L,L,N2,2);
 % plot(p2(:,1),p2(:,2),'b+');
 % voronoi(p1(:,1),p1(:,2));
 
-p3 = unifrnd(-L,L,1000,2);
+p3 = unifrnd(-L,L,10,2);
 % save( 'p3.mat', 'p3');
 % 
 % load p3.mat

@@ -3,16 +3,16 @@ snr = zeros(10,1);
 averageAssistedRate = zeros(10,1);
 averageRate = zeros(10,1);
 for j = 1:10
-    alpha1 = 0.85;
+    alpha1 = 0.5;
     alpha2 = 1 - alpha1;
 
-    beta1 = 0.1;
-    beta2 = 1-beta1;
+%     beta1 = 0.1;
+%     beta2 = 1-beta1;
 
     Psb = alpha1*Ps;
     Psm = alpha2*Ps;
-    Psm1 = beta1*Psm;
-    Psm2 = beta2*Psm;
+%     Psm1 = beta1*Psm;
+%     Psm2 = beta2*Psm;
     Pr = Ps;
     Prm = Pr/alpha2;
     gamma = 4; % pathloss exponent
@@ -65,12 +65,12 @@ for j = 1:10
                 Irb = sum(hsrSquared*Psb) - hsrSquared(i)*Psb + Pnoise;
                 hsrtildeSquared = hsrSquared(i)/Irb;
 
-                C1 = alpha1*log(1+hsrtildeSquared*Psb);
-                C2 = alpha2*log(1+hsdtilde2Squared*beta2*Psm);
-                C = alpha1*log(1 + hsdtilde1Squared*Psb) + alpha2*log(1+hsdtilde2Squared*beta2*Psm + ( sqrt(hsdtilde2Squared*(1-beta2)*Psm) + sqrt(hrdtildeSquared*Prm))^2);
-                %[BETA,assistedRate(i)] = fminbnd(@(beta1) -min(C, C1+C2),0,1);
-                assistedRate(i) = min(C, C1+C2);
-                %assistedRate(i) = -assistedRate(i);
+                C = @(beta1) -alpha1*log(1+hsrtildeSquared*Psb)-alpha2*log(1+hsdtilde2Squared*(1-beta1)*Psm);
+                %C2 = alpha2*log(1+hsdtilde2Squared*beta2*Psm);
+                C3 = @(beta1) -alpha1*log(1 + hsdtilde1Squared*Psb) - alpha2*log(1+hsdtilde2Squared*(1-beta1)*Psm + ( sqrt(hsdtilde2Squared*beta1*Psm) + sqrt(hrdtildeSquared*Prm))^2);
+                [BETA,assistedRate(i)] = fminbnd(@(beta1) min(C(beta1), C3(beta1)),0,1);
+                %assistedRate(i) = min(C, C1+C2);
+                assistedRate(i) = -assistedRate(i);
      %       end
         else
 
@@ -86,6 +86,6 @@ for j = 1:10
     snr(j) = 10*log(Ps/Pnoise);
     Ps = 5*Ps;
 end
-plot(snr,averageAssistedRate,'r-');
+plot(snr,averageAssistedRate,'r');
 hold on
 plot(snr,averageRate);
