@@ -3,7 +3,7 @@ snr = zeros(10,1);
 averageAssistedRate = zeros(10,1);
 averageRate = zeros(10,1);
 for j = 1:10
-    alpha1 = 0.5;
+    alpha1 = 0.9;
     alpha2 = 1 - alpha1;
 
 %     beta1 = 0.1;
@@ -48,33 +48,33 @@ for j = 1:10
         rel = hasCoop(i);
         if rel > 0
 
-            Idb = sum(hsd1Squared*Psb) - hsd1Squared(i)*Psb + Pnoise;
+            Idb = sum(hsd1Squared(hasCoop~=0)*Psb) + sum(hsd1Squared(hasCoop==0)*Ps) - hsd1Squared(i)*Psb + Pnoise;
             hsdtilde1Squared = hsd1Squared(i)/Idb;
 
-            Idm = sum(hrdSquared*Prm) + sum(hsd2Squared*Psm)+Pnoise;
+            Idm = sum(hrdSquared*Prm) + sum(hsd2Squared(hasCoop~=0)*Psm) + sum(hsd2Squared(hasCoop==0)*Ps)+Pnoise;
     %     hsdtilde2Squared = hsd2Squared(i)/(Idm-hsd2Squared(i)*Psm);
 
 
             hrdtildeSquared = hrdSquared(rel)/(Idm - hrdSquared(rel)*Prm - hsd2Squared(i)*Psm);
-    %        if hrdtildeSquared > 0.0001
-                hsdtilde2Squared = hsd2Squared(i)/(Idm-hsd2Squared(i)*Psm - hrdSquared(rel)*Prm);
+    
+            hsdtilde2Squared = hsd2Squared(i)/(Idm-hsd2Squared(i)*Psm - hrdSquared(rel)*Prm);
 
-                rsr = pdist2(p4,p5(rel,:));
-                gsr =  exprnd(1,length(rsr),1);
-                hsrSquared = gsr.*(rsr.^(-gamma));
-                Irb = sum(hsrSquared*Psb) - hsrSquared(i)*Psb + Pnoise;
-                hsrtildeSquared = hsrSquared(i)/Irb;
+            rsr = pdist2(p4,p5(rel,:));
+            gsr =  exprnd(1,length(rsr),1);
+            hsrSquared = gsr.*(rsr.^(-gamma));
+            Irb = sum(hsrSquared(hasCoop~=0)*Psb) + sum(hsrSquared(hasCoop==0)*Ps) - hsrSquared(i)*Psb + Pnoise;
+            hsrtildeSquared = hsrSquared(i)/Irb;
 
-                C = @(beta1) -alpha1*log(1+hsrtildeSquared*Psb)-alpha2*log(1+hsdtilde2Squared*(1-beta1)*Psm);
-                %C2 = alpha2*log(1+hsdtilde2Squared*beta2*Psm);
-                C3 = @(beta1) -alpha1*log(1 + hsdtilde1Squared*Psb) - alpha2*log(1+hsdtilde2Squared*(1-beta1)*Psm + ( sqrt(hsdtilde2Squared*beta1*Psm) + sqrt(hrdtildeSquared*Prm))^2);
-                [BETA,assistedRate(i)] = fminbnd(@(beta1) min(C(beta1), C3(beta1)),0,1);
-                %assistedRate(i) = min(C, C1+C2);
-                assistedRate(i) = -assistedRate(i);
-     %       end
+            C = @(beta1) -alpha1*log(1+hsrtildeSquared*Psb)-alpha2*log(1+hsdtilde2Squared*(1-beta1)*Psm);
+            %C2 = alpha2*log(1+hsdtilde2Squared*beta2*Psm);
+            C3 = @(beta1) -alpha1*log(1 + hsdtilde1Squared*Psb) - alpha2*log(1+hsdtilde2Squared*(1-beta1)*Psm + ( sqrt(hsdtilde2Squared*beta1*Psm) + sqrt(hrdtildeSquared*Prm))^2);
+            [BETA,assistedRate(i)] = fminbnd(@(beta1) min(C(beta1), C3(beta1)),0,1);
+            %assistedRate(i) = min(C, C1+C2);
+            assistedRate(i) = -assistedRate(i);
+
         else
 
-            Idm = sum(hsd2Squared*Ps)+Pnoise;
+            Idm = sum(hrdSquared*Prm) + sum(hsd2Squared(hasCoop~=0)*Psm) + sum(hsd2Squared(hasCoop==0)*Ps)+Pnoise;
             hsdtilde2Squared = hsd2Squared(i)/(Idm-hsd2Squared(i)*Ps);
             assistedRate(i) = alpha1*log(1+hsdtilde1Squared*Ps)+alpha2*log(1+hsdtilde2Squared*Ps);
            % rate(i) = assistedRate(i);
