@@ -27,4 +27,5 @@ save hasBS
 clear V C in a
 plot(BS(:,1),BS(:,2),'go');
 
+plot(r2byr1(hasCoop ~= 0),assistedRate(hasCoop~=0)./rate(hasCoop~=0),'ro');
 

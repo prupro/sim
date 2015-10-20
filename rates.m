@@ -3,7 +3,7 @@ snr = zeros(10,1);
 averageAssistedRate = zeros(10,1);
 averageRate = zeros(10,1);
 for j = 1:10
-    alpha1 = 0.9;
+    alpha1 = 0.5;
     alpha2 = 1 - alpha1;
 
 %     beta1 = 0.1;
@@ -15,11 +15,12 @@ for j = 1:10
 %     Psm2 = beta2*Psm;
     Pr = Ps;
     Prm = Pr/alpha2;
-    gamma = 4; % pathloss exponent
+    gamma = 2; % pathloss exponent
     Pnoise = 1;
     p4 = au; 
     p5 = relays;
     assistedRate = zeros(length(p4),1);
+    r2byr1 = zeros(length(p4),1);
     rate = zeros(length(p4),1);
     % C = zeros(length(p4),1);
     % C1 = zeros(length(p4),1);
@@ -71,6 +72,8 @@ for j = 1:10
             [BETA,assistedRate(i)] = fminbnd(@(beta1) min(C(beta1), C3(beta1)),0,1);
             %assistedRate(i) = min(C, C1+C2);
             assistedRate(i) = -assistedRate(i);
+            
+            r2byr1(i) = pdist2(p4(i,:),p5(rel,:))/pdist2(p4(i,:),BS(i,:));
 
         else
 
@@ -81,9 +84,9 @@ for j = 1:10
         end
         rate(i) = alpha1*log(1+hsdtilde1Squared*Ps)+alpha2*log(1+hsdtilde2Squared*Ps);
     end
-    averageAssistedRate(j) = mean(assistedRate);%/log(2);
-    averageRate(j) = mean(rate);%/log(2);
-    snr(j) = 10*log(Ps/Pnoise);
+    averageAssistedRate(j) = mean(assistedRate)/log(2);
+    averageRate(j) = mean(rate)/log(2);
+    snr(j) = 10*log(Ps/Pnoise)/log(10);
     Ps = 5*Ps;
 end
 plot(snr,averageAssistedRate,'r');

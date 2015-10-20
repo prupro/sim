@@ -13,13 +13,13 @@ for i = 1:length(au)
     end      
 end
 relays = p2(logical(relay),:);
-j = 1;
-for i = 1:length(relays)
-    while(hasCoop(j) == 0)
-        j = j+1;
+
+for j = 1:length(au)
+    if hasCoop(j) == 0
+        continue
     end
-    hasCoop(j) = i;
-    j = j+1;
+    t = hasCoop(j);
+    hasCoop(j) = numel(find(relay(1:t)>=1));
 end
 % save ('hasCoop.mat', 'hasCoop');
 % save ('relay.mat','relay');
