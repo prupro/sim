@@ -29,3 +29,16 @@ plot(BS(:,1),BS(:,2),'go');
 
 plot(r2byr1(hasCoop ~= 0),assistedRate(hasCoop~=0)./rate(hasCoop~=0),'ro');
 
+
+lambda = 1/2;
+eps1 = @(psi,lambda) 2*((cos(psi)).^2)./(pi*(lambda+4*((cos(psi)).^2)));
+
+a = integral(@(psi)eps1(psi,lambda),-pi/2,pi/2)
+gamma = 3;
+fz = @(z) (gamma*(z.^(gamma-1)))./((1+z.^gamma).^2);
+b = integral(fz,2,Inf)
+
+fz = @(x,y)fx(x).*fy(y);
+integral2(fz,0,4,2,ymax)
+
+
