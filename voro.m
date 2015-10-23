@@ -1,8 +1,15 @@
+pe3 = zeros(6,1);
+for m = 1:6
+
+    p = 0;
+
+    lambda2 = (2^m)/200;
 L = 200; 
 area = L*L;
-lambda1 = 1; % density of Active Users (AU)
-lambda2 = 2; % density of Idle Users (IU)
-
+lambda1 = 0.01; % density of Active Users (AU)
+ % density of Idle Users (IU)
+ 
+for b = 1:50
 N1 = poissrnd(lambda1*area); % no. of AUs
 N2 = poissrnd(lambda2*area); % no. of IUs
 
@@ -18,7 +25,7 @@ p2 = unifrnd(-L/2,L/2,N2,2);
 % plot(p2(:,1),p2(:,2),'b+');
 % voronoi(p1(:,1),p1(:,2));
 
-p3 = unifrnd(-L/2,L/2,1000,2);
+p3 = unifrnd(-L/2,L/2,500,2);
 % save( 'p3.mat', 'p3');
 % 
 % load p3.mat
@@ -34,12 +41,12 @@ for i = 1:length(p1)
         continue
     end
     in = inpolygon(p3(:,1),p3(:,2),V(C{i,1},1),V(C{i,1},2));
-    a = find(in==1);
-    if isempty(a)
+    inn = find(in==1);
+    if isempty(inn)
         continue
     end
     hasBS(i) = 1;    
-    BS(i,:) = p3(a(1),:);
+    BS(i,:) = p3(inn(1),:);
 end
 % save ('BS.mat', 'BS')
 % save ('hasBS.mat','hasBS')
@@ -52,7 +59,9 @@ BS = BS(logical(hasBS),:);
 
 clear V C in a p3
 % plot(BS(logical(hasBS),1),BS(logical(hasBS),2),'go');
-
-
-
+coopE2;
+p = p+CoopProbability;
+end
+pe3(m) = p/50;
+end
 
