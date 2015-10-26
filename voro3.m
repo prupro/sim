@@ -1,16 +1,11 @@
-pe3 = zeros(10,1);
-lamb = [1     2     4     8    12    16    20    24    28    32];
-for m = 1:10
 
-    p = 0;
-
-lambda2 = lamb(m)/100;
 L = 200; 
 area = L*L;
 lambda1 = 0.01; % density of Active Users (AU)
- %lambda2 = 0.02;% density of Idle Users (IU)
- 
-for b = 1:50
+ lambda2 = 0.08;% density of Idle Users (IU)
+ assi = zeros(10,1);
+ direc = zeros(10,1);
+for b = 1:25
 N1 = poissrnd(lambda1*area); % no. of AUs
 N2 = poissrnd(lambda2*area); % no. of IUs
 
@@ -60,9 +55,12 @@ BS = BS(logical(hasBS),:);
 
 clear V C in a p3
 % plot(BS(logical(hasBS),1),BS(logical(hasBS),2),'go');
-coopE4;
-p = p+CoopProbability;
+coopE2;
+rates;
+assi = assi + averageAssistedRate;
+direc = direc + averageRate;
 end
-pe3(m) = p/50;
-end
+avgAss = assi/25;
+avgDirec = direc/25;
+
 

@@ -29,6 +29,8 @@ plot(BS(:,1),BS(:,2),'go');
 
 plot(r2byr1(hasCoop ~= 0),assistedRate(hasCoop~=0)./rate(hasCoop~=0),'ro');
 
+plot(r2byr1(cellEdger ~= 0),assistedRate(cellEdger~=0)./rate(cellEdger~=0),'ro');
+
 
 lambda = 1/2;
 eps1 = @(psi,lambda) 2*((cos(psi)).^2)./(pi*(lambda+4*((cos(psi)).^2)));
